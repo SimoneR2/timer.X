@@ -24,15 +24,15 @@ unsigned char porte [] = {
 
 __interrupt(high_priority) void ISR_alta(void) {
     if (INTCONbits.INT0IF == 1) {
-        if (PORTBbits.RB1 == 1) {
+        if (PORTBbits.RB1 == 0) {
             secondi++;
-            if (secondi > 60) {
+            if (secondi > 59) {
                 minuti++;
                 secondi = 0;
             }
         } else {
             secondi--;
-            if (secondi < 0) {
+            if (secondi < 1) {
                 minuti--;
                 secondi = 59;
             }
@@ -57,13 +57,16 @@ unsigned char disp[4] = 0;
 void main(void) {
     configurazione();
     while (1) {
-        disp[1] = secondi / 10;
-        disp[0] = secondi - (disp[1] * 10);
-        disp[3] = minuti / 10;
-        disp[2] = minuti - (disp[3] * 10);
+        disp[3] = secondi / 10;
+        disp[2] = secondi - (disp[3] * 10);
+        disp[0] = minuti / 10;
+        disp[1] = minuti - (disp[0] * 10);
 
         for (unsigned char i = 0; i < 4; i++) {
             PORTD = numeri[disp[i]];
+            if (i == 2){
+                PORTDbits.RD4 =1;
+            }
             PORTC = porte[i];
             __delay_ms(2);
         }
@@ -77,6 +80,7 @@ void main(void) {
             T0CONbits.TMR0ON = 1;
         }
         if ((T0CONbits.TMR0ON == 1)&&(secondi == 0)&(minuti == 0)) {
+            T0CONbits.TMR0ON = 0;
             PORTAbits.RA5 = 0;
             for (unsigned char c = 0; c<10; c++){
             for (unsigned char i = 0; i < 4; i++) {
@@ -84,11 +88,16 @@ void main(void) {
                 PORTC = porte[i];
                 __delay_ms(2);
             }
-            for (unsigned char b = 0; b > 10; b++) {
+            for (unsigned char b = 0; b < 10; b++) {
                 __delay_ms(10);
             }
-            PORTC = 0x00;
-            for (unsigned char f = 0; f > 10; f++) {
+            for (unsigned char i = 0; i < 4; i++) {
+                PORTD = 0x00;
+                PORTC = porte[i];
+                __delay_ms(2);
+            }
+     
+            for (unsigned char f = 0; f < 10; f++) {
                 __delay_ms(10);
             }
         }
