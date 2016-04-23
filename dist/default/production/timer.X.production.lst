@@ -1,7 +1,7 @@
 
 
 Microchip Technology PIC18 LITE Macro Assembler V1.35 build -356382666 
-                                                                                               Sat Apr 23 20:37:38 2016
+                                                                                               Sat Apr 23 22:33:29 2016
 
 Microchip Technology Omniscient Code Generator v1.35 (Free mode) build 201507080246
      1                           	processor	18F4550
@@ -10,365 +10,600 @@ Microchip Technology Omniscient Code Generator v1.35 (Free mode) build 201507080
      4                           	opt	lm
      5                           	psect	idataCOMRAM,global,class=CODE,delta=1
      6                           	psect	cinit,global,reloc=2,class=CODE,delta=1
-     7                           	psect	dataCOMRAM,global,class=COMRAM,space=1,delta=1
-     8                           	psect	cstackCOMRAM,global,class=COMRAM,space=1,delta=1
-     9                           	psect	text0,global,reloc=2,class=CODE,delta=1
-    10                           	psect	text1,global,reloc=2,class=CODE,delta=1
-    11                           	psect	intsave_regs,global,class=BIGRAM,space=1,delta=1
-    12                           	psect	rparam,global,class=COMRAM,space=1,delta=1
-    13  0000                     
-    14                           	psect	idataCOMRAM
-    15  007F5C                     __pidataCOMRAM:
-    16                           	opt stack 0
-    17                           
-    18                           ;initializer for _numeri
-    19  007F5C  CF                 	db	207
-    20  007F5D  88                 	db	136
-    21  007F5E  6D                 	db	109
-    22  007F5F  AD                 	db	173
-    23  007F60  AA                 	db	170
-    24  007F61  A7                 	db	167
-    25  007F62  E7                 	db	231
-    26  007F63  8C                 	db	140
-    27  007F64  EF                 	db	239
-    28  007F65  AE                 	db	174
-    29  0000                     _CMCON	set	4020
-    30  0000                     _LATA	set	3977
-    31  0000                     _LATB	set	3978
-    32  0000                     _LATC	set	3979
-    33  0000                     _LATD	set	3980
-    34  0000                     _PORTC	set	3970
-    35  0000                     _PORTD	set	3971
-    36  0000                     _TRISA	set	3986
-    37  0000                     _TRISB	set	3987
-    38  0000                     _TRISC	set	3988
-    39  0000                     _TRISD	set	3989
-    40  0000                     _UCFGbits	set	3951
-    41  0000                     _UCONbits	set	3949
-    42                           
-    43                           ; #config settings
-    44  0000                     
-    45                           	psect	cinit
-    46  007F66                     __pcinit:
-    47                           	opt stack 0
-    48  007F66                     start_initialization:
-    49                           	opt stack 0
-    50  007F66                     __initialization:
-    51                           	opt stack 0
-    52                           
-    53                           ; Initialize objects allocated to COMRAM (10 bytes)
-    54                           ; load TBLPTR registers with __pidataCOMRAM
-    55  007F66  0E5C               	movlw	low __pidataCOMRAM
-    56  007F68  6EF6               	movwf	tblptrl,c
-    57  007F6A  0E7F               	movlw	high __pidataCOMRAM
-    58  007F6C  6EF7               	movwf	tblptrh,c
-    59  007F6E  0E00               	movlw	low (__pidataCOMRAM shr (0+16))
-    60  007F70  6EF8               	movwf	tblptru,c
-    61  007F72  EE00  F001         	lfsr	0,__pdataCOMRAM
-    62  007F76  EE10 F00A          	lfsr	1,10
-    63  007F7A                     copy_data0:
-    64  007F7A  0009               	tblrd		*+
-    65  007F7C  CFF5 FFEE          	movff	tablat,postinc0
-    66  007F80  50E5               	movf	postdec1,w,c
-    67  007F82  50E1               	movf	fsr1l,w,c
-    68  007F84  E1FA               	bnz	copy_data0
-    69  007F86                     end_of_initialization:
-    70                           	opt stack 0
-    71  007F86                     __end_of__initialization:
-    72                           	opt stack 0
-    73  007F86  0100               	movlb	0
-    74  007F88  EFDA  F03F         	goto	_main	;jump to C main() function
-    75                           tblptru	equ	0xFF8
-    76                           tblptrh	equ	0xFF7
-    77                           tblptrl	equ	0xFF6
-    78                           tablat	equ	0xFF5
-    79                           postinc0	equ	0xFEE
-    80                           postdec1	equ	0xFE5
-    81                           fsr1l	equ	0xFE1
-    82                           
-    83                           	psect	dataCOMRAM
-    84  000001                     __pdataCOMRAM:
-    85                           	opt stack 0
-    86  000001                     _numeri:
+     7                           	psect	bssCOMRAM,global,class=COMRAM,space=1,delta=1
+     8                           	psect	dataCOMRAM,global,class=COMRAM,space=1,delta=1
+     9                           	psect	cstackCOMRAM,global,class=COMRAM,space=1,delta=1
+    10                           	psect	text0,global,reloc=2,class=CODE,delta=1
+    11                           	psect	text1,global,reloc=2,class=CODE,delta=1
+    12                           	psect	intcode,global,reloc=2,class=CODE,delta=1
+    13                           	psect	intcode_body,global,reloc=2,class=CODE,delta=1
+    14                           	psect	intsave_regs,global,class=BIGRAM,space=1,delta=1
+    15                           	psect	rparam,global,class=COMRAM,space=1,delta=1
+    16                           	psect	temp,global,ovrld,common,class=COMRAM,space=1,delta=1
+    17  0000                     
+    18                           	psect	idataCOMRAM
+    19  000142                     __pidataCOMRAM:
+    20                           	opt stack 0
+    21                           
+    22                           ;initializer for _numeri
+    23  000142  CF                 	db	207
+    24  000143  82                 	db	130
+    25  000144  67                 	db	103
+    26  000145  A7                 	db	167
+    27  000146  AA                 	db	170
+    28  000147  AD                 	db	173
+    29  000148  ED                 	db	237
+    30  000149  86                 	db	134
+    31  00014A  EF                 	db	239
+    32  00014B  AF                 	db	175
+    33                           
+    34                           ;initializer for _porte
+    35  00014C  01                 	db	1
+    36  00014D  02                 	db	2
+    37  00014E  04                 	db	4
+    38  00014F  80                 	db	128
+    39  0000                     _INTCON2bits	set	4081
+    40  0000                     _INTCONbits	set	4082
+    41  0000                     _LATA	set	3977
+    42  0000                     _LATB	set	3978
+    43  0000                     _LATC	set	3979
+    44  0000                     _LATD	set	3980
+    45  0000                     _PORTBbits	set	3969
+    46  0000                     _PORTC	set	3970
+    47  0000                     _PORTCbits	set	3970
+    48  0000                     _PORTD	set	3971
+    49  0000                     _RCONbits	set	4048
+    50  0000                     _TRISA	set	3986
+    51  0000                     _TRISB	set	3987
+    52  0000                     _TRISC	set	3988
+    53  0000                     _TRISD	set	3989
+    54  0000                     _UCFGbits	set	3951
+    55  0000                     _UCONbits	set	3949
+    56                           
+    57                           ; #config settings
+    58  0000                     
+    59                           	psect	cinit
+    60  000116                     __pcinit:
+    61                           	opt stack 0
+    62  000116                     start_initialization:
+    63                           	opt stack 0
+    64  000116                     __initialization:
+    65                           	opt stack 0
+    66                           
+    67                           ; Clear objects allocated to COMRAM (1 bytes)
+    68  000116  6A1E               	clrf	__pbssCOMRAM& (0+255),c
+    69                           
+    70                           ; Initialize objects allocated to COMRAM (14 bytes)
+    71                           ; load TBLPTR registers with __pidataCOMRAM
+    72  000118  0E42               	movlw	low __pidataCOMRAM
+    73  00011A  6EF6               	movwf	tblptrl,c
+    74  00011C  0E01               	movlw	high __pidataCOMRAM
+    75  00011E  6EF7               	movwf	tblptrh,c
+    76  000120  0E00               	movlw	low (__pidataCOMRAM shr (0+16))
+    77  000122  6EF8               	movwf	tblptru,c
+    78  000124  EE00  F010         	lfsr	0,__pdataCOMRAM
+    79  000128  EE10 F00E          	lfsr	1,14
+    80  00012C                     copy_data0:
+    81  00012C  0009               	tblrd		*+
+    82  00012E  CFF5 FFEE          	movff	tablat,postinc0
+    83  000132  50E5               	movf	postdec1,w,c
+    84  000134  50E1               	movf	fsr1l,w,c
+    85  000136  E1FA               	bnz	copy_data0
+    86  000138                     end_of_initialization:
     87                           	opt stack 0
-    88  000001                     	ds	10
-    89                           tblptru	equ	0xFF8
-    90                           tblptrh	equ	0xFF7
-    91                           tblptrl	equ	0xFF6
-    92                           tablat	equ	0xFF5
-    93                           postinc0	equ	0xFEE
-    94                           postdec1	equ	0xFE5
-    95                           fsr1l	equ	0xFE1
-    96                           
-    97                           	psect	cstackCOMRAM
-    98  00000B                     __pcstackCOMRAM:
-    99                           	opt stack 0
-   100  00000B                     ??_main:
+    88  000138                     __end_of__initialization:
+    89                           	opt stack 0
+    90  000138  901F               	bcf	int$flags,0,c	;clear compiler interrupt flag (level 1)
+    91  00013A  921F               	bcf	int$flags,1,c	;clear compiler interrupt flag (level 2)
+    92  00013C  0100               	movlb	0
+    93  00013E  EF4F  F000         	goto	_main	;jump to C main() function
+    94                           tblptru	equ	0xFF8
+    95                           tblptrh	equ	0xFF7
+    96                           tblptrl	equ	0xFF6
+    97                           tablat	equ	0xFF5
+    98                           postinc0	equ	0xFEE
+    99                           postdec1	equ	0xFE5
+   100                           fsr1l	equ	0xFE1
    101                           
-   102                           ; 0 bytes @ 0x0
-   103  00000B                     	ds	1
-   104  00000C                     main@c:
-   105                           	opt stack 0
-   106                           
-   107                           ; 1 bytes @ 0x1
-   108  00000C                     	ds	1
-   109  00000D                     main@i:
-   110                           	opt stack 0
-   111                           
-   112                           ; 1 bytes @ 0x2
-   113  00000D                     	ds	1
-   114                           tblptru	equ	0xFF8
-   115                           tblptrh	equ	0xFF7
-   116                           tblptrl	equ	0xFF6
-   117                           tablat	equ	0xFF5
-   118                           postinc0	equ	0xFEE
-   119                           postdec1	equ	0xFE5
-   120                           fsr1l	equ	0xFE1
-   121                           
-   122 ;;
-   123 ;;Main: autosize = 0, tempsize = 1, incstack = 0, save=0
-   124 ;;
-   125 ;; *************** function _main *****************
-   126 ;; Defined at:
-   127 ;;		line 18 in file "timer_main.c"
-   128 ;; Parameters:    Size  Location     Type
-   129 ;;		None
-   130 ;; Auto vars:     Size  Location     Type
-   131 ;;  c               1    1[COMRAM] unsigned char 
-   132 ;;  i               1    2[COMRAM] unsigned char 
-   133 ;; Return value:  Size  Location     Type
-   134 ;;		None               void
-   135 ;; Registers used:
-   136 ;;		wreg, fsr2l, fsr2h, status,2, status,0, prodl, prodh, cstack
-   137 ;; Tracked objects:
-   138 ;;		On entry : 0/0
-   139 ;;		On exit  : 0/0
-   140 ;;		Unchanged: 0/0
-   141 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7
-   142 ;;      Params:         0       0       0       0       0       0       0       0       0
-   143 ;;      Locals:         2       0       0       0       0       0       0       0       0
-   144 ;;      Temps:          1       0       0       0       0       0       0       0       0
-   145 ;;      Totals:         3       0       0       0       0       0       0       0       0
-   146 ;;Total ram usage:        3 bytes
-   147 ;; Hardware stack levels required when called:    1
-   148 ;; This function calls:
-   149 ;;		_configurazione
-   150 ;; This function is called by:
-   151 ;;		Startup code after reset
-   152 ;; This function uses a non-reentrant model
+   102                           	psect	bssCOMRAM
+   103  00001E                     __pbssCOMRAM:
+   104                           	opt stack 0
+   105  00001E                     _i:
+   106                           	opt stack 0
+   107  00001E                     	ds	1
+   108                           tblptru	equ	0xFF8
+   109                           tblptrh	equ	0xFF7
+   110                           tblptrl	equ	0xFF6
+   111                           tablat	equ	0xFF5
+   112                           postinc0	equ	0xFEE
+   113                           postdec1	equ	0xFE5
+   114                           fsr1l	equ	0xFE1
+   115                           
+   116                           	psect	dataCOMRAM
+   117  000010                     __pdataCOMRAM:
+   118                           	opt stack 0
+   119  000010                     _numeri:
+   120                           	opt stack 0
+   121  000010                     	ds	10
+   122  00001A                     _porte:
+   123                           	opt stack 0
+   124  00001A                     	ds	4
+   125                           tblptru	equ	0xFF8
+   126                           tblptrh	equ	0xFF7
+   127                           tblptrl	equ	0xFF6
+   128                           tablat	equ	0xFF5
+   129                           postinc0	equ	0xFEE
+   130                           postdec1	equ	0xFE5
+   131                           fsr1l	equ	0xFE1
+   132                           
+   133                           	psect	cstackCOMRAM
+   134  000001                     __pcstackCOMRAM:
+   135                           	opt stack 0
+   136  000001                     ??_ISR_alta:
+   137  000001                     
+   138                           ; 0 bytes @ 0x0
+   139  000001                     	ds	14
+   140  00000F                     main@a:
+   141                           	opt stack 0
+   142                           
+   143                           ; 1 bytes @ 0xE
+   144  00000F                     	ds	1
+   145                           tblptru	equ	0xFF8
+   146                           tblptrh	equ	0xFF7
+   147                           tblptrl	equ	0xFF6
+   148                           tablat	equ	0xFF5
+   149                           postinc0	equ	0xFEE
+   150                           postdec1	equ	0xFE5
+   151                           fsr1l	equ	0xFE1
+   152                           
    153 ;;
-   154                           
-   155                           	psect	text0
-   156  007FB4                     __ptext0:
-   157                           	opt stack 0
-   158  007FB4                     _main:
-   159                           	opt stack 30
-   160                           
-   161                           ;timer_main.c: 19: configurazione();
-   162                           
-   163                           ;incstack = 0
-   164  007FB4  ECC6  F03F         	call	_configurazione	;wreg free
-   165                           
-   166                           ;timer_main.c: 20: PORTC = 0b10000000;
-   167  007FB8  0E80               	movlw	128
-   168  007FBA  6E82               	movwf	3970,c	;volatile
-   169                           
-   170                           ;timer_main.c: 21: for (unsigned char i = 0; i < 11; i++) {
-   171  007FBC  0E00               	movlw	0
-   172  007FBE  6E0D               	movwf	main@i,c
-   173  007FC0                     l654:
-   174  007FC0  0E0A               	movlw	10
-   175  007FC2  640D               	cpfsgt	main@i,c
-   176  007FC4  D002               	goto	l658
-   177  007FC6  EF00  F000         	goto	start
-   178  007FCA                     l658:
-   179                           
-   180                           ;timer_main.c: 22: PORTD = numeri[i];
-   181  007FCA  500D               	movf	main@i,w,c
-   182  007FCC  0D01               	mullw	1
-   183  007FCE  0E01               	movlw	low _numeri
-   184  007FD0  24F3               	addwf	prodl,w,c
-   185  007FD2  6ED9               	movwf	fsr2l,c
-   186  007FD4  0E00               	movlw	high _numeri
-   187  007FD6  20F4               	addwfc	prodh,w,c
-   188  007FD8  6EDA               	movwf	fsr2h,c
-   189  007FDA  50DF               	movf	indf2,w,c
-   190  007FDC  6E83               	movwf	3971,c	;volatile
-   191                           
-   192                           ;timer_main.c: 23: for (unsigned char c = 0; c < 50; c++) {
-   193  007FDE  0E00               	movlw	0
-   194  007FE0  6E0C               	movwf	main@c,c
-   195  007FE2                     l662:
-   196  007FE2  0E31               	movlw	49
-   197  007FE4  640C               	cpfsgt	main@c,c
-   198  007FE6  D001               	goto	l666
-   199  007FE8  D009               	goto	l670
-   200  007FEA                     l666:
-   201                           
-   202                           ;timer_main.c: 24: _delay((unsigned long)((10)*(16000000/4000.0)));
-   203  007FEA  0E34               	movlw	52
-   204  007FEC  6E0B               	movwf	??_main& (0+255),c
-   205  007FEE  0EF2               	movlw	242
-   206  007FF0                     u57:
-   207  007FF0  2EE8               	decfsz	wreg,f,c
-   208  007FF2  D7FE               	goto	u57
-   209  007FF4  2E0B               	decfsz	??_main& (0+255),f,c
-   210  007FF6  D7FC               	goto	u57
-   211  007FF8  2A0C               	incf	main@c,f,c
-   212  007FFA  D7F3               	goto	l662
-   213  007FFC                     l670:
-   214  007FFC  2A0D               	incf	main@i,f,c
-   215  007FFE  D7E0               	goto	l654
-   216  008000                     __end_of_main:
-   217                           	opt stack 0
-   218                           tblptru	equ	0xFF8
-   219                           tblptrh	equ	0xFF7
-   220                           tblptrl	equ	0xFF6
-   221                           tablat	equ	0xFF5
-   222                           prodh	equ	0xFF4
-   223                           prodl	equ	0xFF3
-   224                           postinc0	equ	0xFEE
-   225                           wreg	equ	0xFE8
-   226                           postdec1	equ	0xFE5
-   227                           fsr1l	equ	0xFE1
-   228                           indf2	equ	0xFDF
-   229                           fsr2h	equ	0xFDA
-   230                           fsr2l	equ	0xFD9
-   231                           
-   232 ;; *************** function _configurazione *****************
-   233 ;; Defined at:
-   234 ;;		line 30 in file "timer_main.c"
-   235 ;; Parameters:    Size  Location     Type
-   236 ;;		None
-   237 ;; Auto vars:     Size  Location     Type
-   238 ;;		None
-   239 ;; Return value:  Size  Location     Type
-   240 ;;		None               void
-   241 ;; Registers used:
-   242 ;;		wreg, status,2
-   243 ;; Tracked objects:
-   244 ;;		On entry : 0/0
-   245 ;;		On exit  : 0/0
-   246 ;;		Unchanged: 0/0
-   247 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7
-   248 ;;      Params:         0       0       0       0       0       0       0       0       0
-   249 ;;      Locals:         0       0       0       0       0       0       0       0       0
-   250 ;;      Temps:          0       0       0       0       0       0       0       0       0
-   251 ;;      Totals:         0       0       0       0       0       0       0       0       0
-   252 ;;Total ram usage:        0 bytes
-   253 ;; Hardware stack levels used:    1
-   254 ;; This function calls:
-   255 ;;		Nothing
-   256 ;; This function is called by:
-   257 ;;		_main
-   258 ;; This function uses a non-reentrant model
-   259 ;;
+   154 ;;Main: autosize = 0, tempsize = 0, incstack = 0, save=0
+   155 ;;
+   156 ;; *************** function _main *****************
+   157 ;; Defined at:
+   158 ;;		line 38 in file "timer_main.c"
+   159 ;; Parameters:    Size  Location     Type
+   160 ;;		None
+   161 ;; Auto vars:     Size  Location     Type
+   162 ;;  a               1   14[COMRAM] unsigned char 
+   163 ;; Return value:  Size  Location     Type
+   164 ;;		None               void
+   165 ;; Registers used:
+   166 ;;		wreg, fsr2l, fsr2h, status,2, status,0, prodl, prodh, cstack
+   167 ;; Tracked objects:
+   168 ;;		On entry : 0/0
+   169 ;;		On exit  : 0/0
+   170 ;;		Unchanged: 0/0
+   171 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7
+   172 ;;      Params:         0       0       0       0       0       0       0       0       0
+   173 ;;      Locals:         1       0       0       0       0       0       0       0       0
+   174 ;;      Temps:          0       0       0       0       0       0       0       0       0
+   175 ;;      Totals:         1       0       0       0       0       0       0       0       0
+   176 ;;Total ram usage:        1 bytes
+   177 ;; Hardware stack levels required when called:    2
+   178 ;; This function calls:
+   179 ;;		_configurazione
+   180 ;; This function is called by:
+   181 ;;		Startup code after reset
+   182 ;; This function uses a non-reentrant model
+   183 ;;
+   184                           
+   185                           	psect	text0
+   186  00009E                     __ptext0:
+   187                           	opt stack 0
+   188  00009E                     _main:
+   189                           	opt stack 29
+   190                           
+   191                           ;timer_main.c: 39: configurazione();
+   192                           
+   193                           ;incstack = 0
+   194  00009E  EC73  F000         	call	_configurazione	;wreg free
+   195                           
+   196                           ;timer_main.c: 40: PORTCbits.RC0 = 1;
+   197  0000A2  8082               	bsf	3970,0,c	;volatile
+   198                           
+   199                           ;timer_main.c: 41: PORTD = 0xff;
+   200  0000A4  6883               	setf	3971,c	;volatile
+   201  0000A6                     l696:
+   202                           
+   203                           ;timer_main.c: 43: for (unsigned char a = 0; a < 4; a++) {
+   204  0000A6  0E00               	movlw	0
+   205  0000A8  6E0F               	movwf	main@a,c
+   206  0000AA                     l698:
+   207  0000AA  0E03               	movlw	3
+   208  0000AC  640F               	cpfsgt	main@a,c
+   209  0000AE  D001               	goto	l702
+   210  0000B0  D7FA               	goto	l696
+   211  0000B2                     l702:
+   212                           
+   213                           ;timer_main.c: 44: PORTD = numeri[i];
+   214  0000B2  501E               	movf	_i,w,c	;volatile
+   215  0000B4  0D01               	mullw	1
+   216  0000B6  0E10               	movlw	low _numeri
+   217  0000B8  24F3               	addwf	prodl,w,c
+   218  0000BA  6ED9               	movwf	fsr2l,c
+   219  0000BC  0E00               	movlw	high _numeri
+   220  0000BE  20F4               	addwfc	prodh,w,c
+   221  0000C0  6EDA               	movwf	fsr2h,c
+   222  0000C2  50DF               	movf	indf2,w,c
+   223  0000C4  6E83               	movwf	3971,c	;volatile
+   224                           
+   225                           ;timer_main.c: 45: PORTC = porte[a];
+   226  0000C6  500F               	movf	main@a,w,c
+   227  0000C8  0D01               	mullw	1
+   228  0000CA  0E1A               	movlw	low _porte
+   229  0000CC  24F3               	addwf	prodl,w,c
+   230  0000CE  6ED9               	movwf	fsr2l,c
+   231  0000D0  0E00               	movlw	high _porte
+   232  0000D2  20F4               	addwfc	prodh,w,c
+   233  0000D4  6EDA               	movwf	fsr2h,c
+   234  0000D6  50DF               	movf	indf2,w,c
+   235  0000D8  6E82               	movwf	3970,c	;volatile
+   236                           
+   237                           ;timer_main.c: 46: _delay((unsigned long)((10)*(16000000/4000000.0)));
+   238  0000DA  0E0D               	movlw	13
+   239  0000DC                     u67:
+   240  0000DC  2EE8               	decfsz	wreg,f,c
+   241  0000DE  D7FE               	goto	u67
+   242  0000E0  F000               	nop	
+   243  0000E2  2A0F               	incf	main@a,f,c
+   244  0000E4  D7E2               	goto	l698
+   245  0000E6                     __end_of_main:
+   246                           	opt stack 0
+   247                           tblptru	equ	0xFF8
+   248                           tblptrh	equ	0xFF7
+   249                           tblptrl	equ	0xFF6
+   250                           tablat	equ	0xFF5
+   251                           prodh	equ	0xFF4
+   252                           prodl	equ	0xFF3
+   253                           postinc0	equ	0xFEE
+   254                           wreg	equ	0xFE8
+   255                           postdec1	equ	0xFE5
+   256                           fsr1l	equ	0xFE1
+   257                           indf2	equ	0xFDF
+   258                           fsr2h	equ	0xFDA
+   259                           fsr2l	equ	0xFD9
    260                           
-   261                           	psect	text1
-   262  007F8C                     __ptext1:
-   263                           	opt stack 0
-   264  007F8C                     _configurazione:
-   265                           	opt stack 30
-   266                           
-   267                           ;timer_main.c: 31: LATA = 0;
-   268                           
-   269                           ;incstack = 0
-   270  007F8C  0E00               	movlw	0
-   271  007F8E  6E89               	movwf	3977,c	;volatile
-   272                           
-   273                           ;timer_main.c: 32: TRISA = 0b11000000;
-   274  007F90  0EC0               	movlw	192
-   275  007F92  6E92               	movwf	3986,c	;volatile
-   276                           
-   277                           ;timer_main.c: 34: LATB = 0;
-   278  007F94  0E00               	movlw	0
-   279  007F96  6E8A               	movwf	3978,c	;volatile
-   280                           
-   281                           ;timer_main.c: 35: TRISB = 0xFF;
-   282  007F98  6893               	setf	3987,c	;volatile
-   283                           
-   284                           ;timer_main.c: 37: LATC = 0;
-   285  007F9A  0E00               	movlw	0
-   286  007F9C  6E8B               	movwf	3979,c	;volatile
-   287                           
-   288                           ;timer_main.c: 38: TRISC = 0x00;
-   289  007F9E  0E00               	movlw	0
-   290  007FA0  6E94               	movwf	3988,c	;volatile
-   291                           
-   292                           ;timer_main.c: 40: LATD = 0;
-   293  007FA2  0E00               	movlw	0
-   294  007FA4  6E8C               	movwf	3980,c	;volatile
-   295                           
-   296                           ;timer_main.c: 41: TRISD = 0x00;
-   297  007FA6  0E00               	movlw	0
-   298  007FA8  6E95               	movwf	3989,c	;volatile
-   299                           
-   300                           ;timer_main.c: 43: CMCON = 0x07;
-   301  007FAA  0E07               	movlw	7
-   302  007FAC  6EB4               	movwf	4020,c	;volatile
-   303                           
-   304                           ;timer_main.c: 44: UCONbits.USBEN = 0;
-   305  007FAE  966D               	bcf	3949,3,c	;volatile
-   306                           
-   307                           ;timer_main.c: 45: UCFGbits.UTRDIS = 0;
-   308  007FB0  966F               	bcf	3951,3,c	;volatile
-   309  007FB2  0012               	return		;funcret
-   310  007FB4                     __end_of_configurazione:
-   311                           	opt stack 0
-   312  0000                     tblptru	equ	0xFF8
-   313                           tblptrh	equ	0xFF7
-   314                           tblptrl	equ	0xFF6
-   315                           tablat	equ	0xFF5
-   316                           prodh	equ	0xFF4
-   317                           prodl	equ	0xFF3
-   318                           postinc0	equ	0xFEE
-   319                           wreg	equ	0xFE8
-   320                           postdec1	equ	0xFE5
-   321                           fsr1l	equ	0xFE1
-   322                           indf2	equ	0xFDF
-   323                           fsr2h	equ	0xFDA
-   324                           fsr2l	equ	0xFD9
-   325                           tblptru	equ	0xFF8
-   326                           tblptrh	equ	0xFF7
-   327                           tblptrl	equ	0xFF6
-   328                           tablat	equ	0xFF5
-   329                           prodh	equ	0xFF4
-   330                           prodl	equ	0xFF3
-   331                           postinc0	equ	0xFEE
-   332                           wreg	equ	0xFE8
-   333                           postdec1	equ	0xFE5
-   334                           fsr1l	equ	0xFE1
-   335                           indf2	equ	0xFDF
-   336                           fsr2h	equ	0xFDA
-   337                           fsr2l	equ	0xFD9
+   261 ;; *************** function _configurazione *****************
+   262 ;; Defined at:
+   263 ;;		line 51 in file "timer_main.c"
+   264 ;; Parameters:    Size  Location     Type
+   265 ;;		None
+   266 ;; Auto vars:     Size  Location     Type
+   267 ;;		None
+   268 ;; Return value:  Size  Location     Type
+   269 ;;		None               void
+   270 ;; Registers used:
+   271 ;;		wreg, status,2
+   272 ;; Tracked objects:
+   273 ;;		On entry : 0/0
+   274 ;;		On exit  : 0/0
+   275 ;;		Unchanged: 0/0
+   276 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7
+   277 ;;      Params:         0       0       0       0       0       0       0       0       0
+   278 ;;      Locals:         0       0       0       0       0       0       0       0       0
+   279 ;;      Temps:          0       0       0       0       0       0       0       0       0
+   280 ;;      Totals:         0       0       0       0       0       0       0       0       0
+   281 ;;Total ram usage:        0 bytes
+   282 ;; Hardware stack levels used:    1
+   283 ;; Hardware stack levels required when called:    1
+   284 ;; This function calls:
+   285 ;;		Nothing
+   286 ;; This function is called by:
+   287 ;;		_main
+   288 ;; This function uses a non-reentrant model
+   289 ;;
+   290                           
+   291                           	psect	text1
+   292  0000E6                     __ptext1:
+   293                           	opt stack 0
+   294  0000E6                     _configurazione:
+   295                           	opt stack 29
+   296                           
+   297                           ;timer_main.c: 52: UCONbits.USBEN = 0;
+   298                           
+   299                           ;incstack = 0
+   300  0000E6  966D               	bcf	3949,3,c	;volatile
+   301                           
+   302                           ;timer_main.c: 53: UCFGbits.UTRDIS = 1;
+   303  0000E8  866F               	bsf	3951,3,c	;volatile
+   304                           
+   305                           ;timer_main.c: 54: LATA = 0;
+   306  0000EA  0E00               	movlw	0
+   307  0000EC  6E89               	movwf	3977,c	;volatile
+   308                           
+   309                           ;timer_main.c: 55: TRISA = 0b11000000;
+   310  0000EE  0EC0               	movlw	192
+   311  0000F0  6E92               	movwf	3986,c	;volatile
+   312                           
+   313                           ;timer_main.c: 57: LATB = 0;
+   314  0000F2  0E00               	movlw	0
+   315  0000F4  6E8A               	movwf	3978,c	;volatile
+   316                           
+   317                           ;timer_main.c: 58: TRISB = 0xFF;
+   318  0000F6  6893               	setf	3987,c	;volatile
+   319                           
+   320                           ;timer_main.c: 60: LATC = 0;
+   321  0000F8  0E00               	movlw	0
+   322  0000FA  6E8B               	movwf	3979,c	;volatile
+   323                           
+   324                           ;timer_main.c: 61: TRISC = 0x00;
+   325  0000FC  0E00               	movlw	0
+   326  0000FE  6E94               	movwf	3988,c	;volatile
+   327                           
+   328                           ;timer_main.c: 63: LATD = 0;
+   329  000100  0E00               	movlw	0
+   330  000102  6E8C               	movwf	3980,c	;volatile
+   331                           
+   332                           ;timer_main.c: 64: TRISD = 0x00;
+   333  000104  0E00               	movlw	0
+   334  000106  6E95               	movwf	3989,c	;volatile
+   335                           
+   336                           ;timer_main.c: 65: INTCONbits.GIEH = 1;
+   337  000108  8EF2               	bsf	intcon,7,c	;volatile
    338                           
-   339                           	psect	rparam
-   340  0000                     tblptru	equ	0xFF8
-   341                           tblptrh	equ	0xFF7
-   342                           tblptrl	equ	0xFF6
-   343                           tablat	equ	0xFF5
-   344                           prodh	equ	0xFF4
-   345                           prodl	equ	0xFF3
-   346                           postinc0	equ	0xFEE
-   347                           wreg	equ	0xFE8
-   348                           postdec1	equ	0xFE5
-   349                           fsr1l	equ	0xFE1
-   350                           indf2	equ	0xFDF
-   351                           fsr2h	equ	0xFDA
-   352                           fsr2l	equ	0xFD9
+   339                           ;timer_main.c: 66: INTCONbits.GIEL = 0;
+   340  00010A  9CF2               	bcf	intcon,6,c	;volatile
+   341                           
+   342                           ;timer_main.c: 67: RCONbits.IPEN = 1;
+   343  00010C  8ED0               	bsf	4048,7,c	;volatile
+   344                           
+   345                           ;timer_main.c: 68: INTCONbits.INT0IF = 0;
+   346  00010E  92F2               	bcf	intcon,1,c	;volatile
+   347                           
+   348                           ;timer_main.c: 69: INTCONbits.INT0IE = 1;
+   349  000110  88F2               	bsf	intcon,4,c	;volatile
+   350                           
+   351                           ;timer_main.c: 70: INTCON2bits.INTEDG0 = 1;
+   352  000112  8CF1               	bsf	intcon2,6,c	;volatile
+   353  000114  0012               	return		;funcret
+   354  000116                     __end_of_configurazione:
+   355                           	opt stack 0
+   356                           tblptru	equ	0xFF8
+   357                           tblptrh	equ	0xFF7
+   358                           tblptrl	equ	0xFF6
+   359                           tablat	equ	0xFF5
+   360                           prodh	equ	0xFF4
+   361                           prodl	equ	0xFF3
+   362                           intcon	equ	0xFF2
+   363                           intcon2	equ	0xFF1
+   364                           postinc0	equ	0xFEE
+   365                           wreg	equ	0xFE8
+   366                           postdec1	equ	0xFE5
+   367                           fsr1l	equ	0xFE1
+   368                           indf2	equ	0xFDF
+   369                           fsr2h	equ	0xFDA
+   370                           fsr2l	equ	0xFD9
+   371                           
+   372 ;; *************** function _ISR_alta *****************
+   373 ;; Defined at:
+   374 ;;		line 25 in file "timer_main.c"
+   375 ;; Parameters:    Size  Location     Type
+   376 ;;		None
+   377 ;; Auto vars:     Size  Location     Type
+   378 ;;		None
+   379 ;; Return value:  Size  Location     Type
+   380 ;;		None               void
+   381 ;; Registers used:
+   382 ;;		wreg, status,2, status,0
+   383 ;; Tracked objects:
+   384 ;;		On entry : 0/0
+   385 ;;		On exit  : 0/0
+   386 ;;		Unchanged: 0/0
+   387 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7
+   388 ;;      Params:         0       0       0       0       0       0       0       0       0
+   389 ;;      Locals:         0       0       0       0       0       0       0       0       0
+   390 ;;      Temps:         14       0       0       0       0       0       0       0       0
+   391 ;;      Totals:        14       0       0       0       0       0       0       0       0
+   392 ;;Total ram usage:       14 bytes
+   393 ;; Hardware stack levels used:    1
+   394 ;; This function calls:
+   395 ;;		Nothing
+   396 ;; This function is called by:
+   397 ;;		Interrupt level 2
+   398 ;; This function uses a non-reentrant model
+   399 ;;
+   400                           
+   401                           	psect	intcode
+   402  000008                     __pintcode:
+   403                           	opt stack 0
+   404  000008                     _ISR_alta:
+   405                           	opt stack 29
+   406                           
+   407                           ;incstack = 0
+   408  000008  821F               	bsf	btemp,1,c	;set compiler interrupt flag (level 2)
+   409  00000A  CFFA F001          	movff	pclath,??_ISR_alta
+   410  00000E  CFFB F002          	movff	pclatu,??_ISR_alta+1
+   411  000012  ED0D  F000         	call	int_func,f	;refresh shadow registers
+   412                           pclatu	equ	0xFFB
+   413                           pclath	equ	0xFFA
+   414                           tblptru	equ	0xFF8
+   415                           tblptrh	equ	0xFF7
+   416                           tblptrl	equ	0xFF6
+   417                           tablat	equ	0xFF5
+   418                           prodh	equ	0xFF4
+   419                           prodl	equ	0xFF3
+   420                           intcon	equ	0xFF2
+   421                           intcon2	equ	0xFF1
+   422                           postinc0	equ	0xFEE
+   423                           wreg	equ	0xFE8
+   424                           postdec1	equ	0xFE5
+   425                           fsr1l	equ	0xFE1
+   426                           indf2	equ	0xFDF
+   427                           fsr2h	equ	0xFDA
+   428                           fsr2l	equ	0xFD9
+   429                           
+   430                           	psect	intcode_body
+   431  00001A                     __pintcode_body:
+   432                           	opt stack 29
+   433  00001A                     int_func:
+   434                           	opt stack 29
+   435  00001A  0006               	pop		; remove dummy address from shadow register refresh
+   436  00001C  CFE9 F003          	movff	fsr0l,??_ISR_alta+2
+   437  000020  CFEA F004          	movff	fsr0h,??_ISR_alta+3
+   438  000024  CFE1 F005          	movff	fsr1l,??_ISR_alta+4
+   439  000028  CFE2 F006          	movff	fsr1h,??_ISR_alta+5
+   440  00002C  CFD9 F007          	movff	fsr2l,??_ISR_alta+6
+   441  000030  CFDA F008          	movff	fsr2h,??_ISR_alta+7
+   442  000034  CFF3 F009          	movff	prodl,??_ISR_alta+8
+   443  000038  CFF4 F00A          	movff	prodh,??_ISR_alta+9
+   444  00003C  CFF6 F00B          	movff	tblptrl,??_ISR_alta+10
+   445  000040  CFF7 F00C          	movff	tblptrh,??_ISR_alta+11
+   446  000044  CFF8 F00D          	movff	tblptru,??_ISR_alta+12
+   447  000048  CFF5 F00E          	movff	tablat,??_ISR_alta+13
+   448                           
+   449                           ;timer_main.c: 26: if (PORTBbits.RB1 == 1) {
+   450  00004C  A281               	btfss	3969,1,c	;volatile
+   451  00004E  D005               	goto	i2l684
+   452                           
+   453                           ;timer_main.c: 27: if (i < 11) {
+   454  000050  0E0B               	movlw	11
+   455  000052  601E               	cpfslt	_i,c	;volatile
+   456  000054  D005               	goto	i2l688
+   457                           
+   458                           ;timer_main.c: 28: i++;
+   459  000056  2A1E               	incf	_i,f,c	;volatile
+   460                           
+   461                           ;timer_main.c: 29: }
+   462                           ;timer_main.c: 30: } else {
+   463  000058  D003               	goto	i2l688
+   464  00005A                     i2l684:
+   465                           
+   466                           ;timer_main.c: 31: if (i > 0) {
+   467  00005A  501E               	movf	_i,w,c	;volatile
+   468  00005C  A4D8               	btfss	status,2,c
+   469                           
+   470                           ;timer_main.c: 32: i--;
+   471  00005E  061E               	decf	_i,f,c	;volatile
+   472  000060                     i2l688:
+   473                           
+   474                           ;timer_main.c: 33: }
+   475                           ;timer_main.c: 34: }
+   476                           ;timer_main.c: 35: INTCONbits.INT0IF = 0;
+   477  000060  92F2               	bcf	intcon,1,c	;volatile
+   478  000062  C00E  FFF5         	movff	??_ISR_alta+13,tablat
+   479  000066  C00D  FFF8         	movff	??_ISR_alta+12,tblptru
+   480  00006A  C00C  FFF7         	movff	??_ISR_alta+11,tblptrh
+   481  00006E  C00B  FFF6         	movff	??_ISR_alta+10,tblptrl
+   482  000072  C00A  FFF4         	movff	??_ISR_alta+9,prodh
+   483  000076  C009  FFF3         	movff	??_ISR_alta+8,prodl
+   484  00007A  C008  FFDA         	movff	??_ISR_alta+7,fsr2h
+   485  00007E  C007  FFD9         	movff	??_ISR_alta+6,fsr2l
+   486  000082  C006  FFE2         	movff	??_ISR_alta+5,fsr1h
+   487  000086  C005  FFE1         	movff	??_ISR_alta+4,fsr1l
+   488  00008A  C004  FFEA         	movff	??_ISR_alta+3,fsr0h
+   489  00008E  C003  FFE9         	movff	??_ISR_alta+2,fsr0l
+   490  000092  C002  FFFB         	movff	??_ISR_alta+1,pclatu
+   491  000096  C001  FFFA         	movff	??_ISR_alta,pclath
+   492  00009A  921F               	bcf	btemp,1,c	;clear compiler interrupt flag (level 2)
+   493  00009C  0011               	retfie		f
+   494  00009E                     __end_of_ISR_alta:
+   495                           	opt stack 0
+   496  0000                     pclatu	equ	0xFFB
+   497                           pclath	equ	0xFFA
+   498                           tblptru	equ	0xFF8
+   499                           tblptrh	equ	0xFF7
+   500                           tblptrl	equ	0xFF6
+   501                           tablat	equ	0xFF5
+   502                           prodh	equ	0xFF4
+   503                           prodl	equ	0xFF3
+   504                           intcon	equ	0xFF2
+   505                           intcon2	equ	0xFF1
+   506                           postinc0	equ	0xFEE
+   507                           fsr0h	equ	0xFEA
+   508                           fsr0l	equ	0xFE9
+   509                           wreg	equ	0xFE8
+   510                           postdec1	equ	0xFE5
+   511                           fsr1h	equ	0xFE2
+   512                           fsr1l	equ	0xFE1
+   513                           indf2	equ	0xFDF
+   514                           fsr2h	equ	0xFDA
+   515                           fsr2l	equ	0xFD9
+   516                           status	equ	0xFD8
+   517                           pclatu	equ	0xFFB
+   518                           pclath	equ	0xFFA
+   519                           tblptru	equ	0xFF8
+   520                           tblptrh	equ	0xFF7
+   521                           tblptrl	equ	0xFF6
+   522                           tablat	equ	0xFF5
+   523                           prodh	equ	0xFF4
+   524                           prodl	equ	0xFF3
+   525                           intcon	equ	0xFF2
+   526                           intcon2	equ	0xFF1
+   527                           postinc0	equ	0xFEE
+   528                           fsr0h	equ	0xFEA
+   529                           fsr0l	equ	0xFE9
+   530                           wreg	equ	0xFE8
+   531                           postdec1	equ	0xFE5
+   532                           fsr1h	equ	0xFE2
+   533                           fsr1l	equ	0xFE1
+   534                           indf2	equ	0xFDF
+   535                           fsr2h	equ	0xFDA
+   536                           fsr2l	equ	0xFD9
+   537                           status	equ	0xFD8
+   538                           
+   539                           	psect	rparam
+   540  0000                     pclatu	equ	0xFFB
+   541                           pclath	equ	0xFFA
+   542                           tblptru	equ	0xFF8
+   543                           tblptrh	equ	0xFF7
+   544                           tblptrl	equ	0xFF6
+   545                           tablat	equ	0xFF5
+   546                           prodh	equ	0xFF4
+   547                           prodl	equ	0xFF3
+   548                           intcon	equ	0xFF2
+   549                           intcon2	equ	0xFF1
+   550                           postinc0	equ	0xFEE
+   551                           fsr0h	equ	0xFEA
+   552                           fsr0l	equ	0xFE9
+   553                           wreg	equ	0xFE8
+   554                           postdec1	equ	0xFE5
+   555                           fsr1h	equ	0xFE2
+   556                           fsr1l	equ	0xFE1
+   557                           indf2	equ	0xFDF
+   558                           fsr2h	equ	0xFDA
+   559                           fsr2l	equ	0xFD9
+   560                           status	equ	0xFD8
+   561                           
+   562                           	psect	temp
+   563  00001F                     btemp:
+   564                           	opt stack 0
+   565  00001F                     	ds	1
+   566  0000                     int$flags	set	btemp
+   567                           pclatu	equ	0xFFB
+   568                           pclath	equ	0xFFA
+   569                           tblptru	equ	0xFF8
+   570                           tblptrh	equ	0xFF7
+   571                           tblptrl	equ	0xFF6
+   572                           tablat	equ	0xFF5
+   573                           prodh	equ	0xFF4
+   574                           prodl	equ	0xFF3
+   575                           intcon	equ	0xFF2
+   576                           intcon2	equ	0xFF1
+   577                           postinc0	equ	0xFEE
+   578                           fsr0h	equ	0xFEA
+   579                           fsr0l	equ	0xFE9
+   580                           wreg	equ	0xFE8
+   581                           postdec1	equ	0xFE5
+   582                           fsr1h	equ	0xFE2
+   583                           fsr1l	equ	0xFE1
+   584                           indf2	equ	0xFDF
+   585                           fsr2h	equ	0xFDA
+   586                           fsr2l	equ	0xFD9
+   587                           status	equ	0xFD8
 
 
 Data Sizes:
     Strings     0
     Constant    0
-    Data        10
-    BSS         0
+    Data        14
+    BSS         1
     Persistent  0
     Stack       0
 
 Auto Spaces:
     Space          Size  Autos    Used
-    COMRAM           95      3      13
+    COMRAM           94     15      30
     BANK0           160      0       0
     BANK1           256      0       0
     BANK2           256      0       0
@@ -386,7 +621,15 @@ Critical Paths under _main in COMRAM
 
     None.
 
+Critical Paths under _ISR_alta in COMRAM
+
+    None.
+
 Critical Paths under _main in BANK0
+
+    None.
+
+Critical Paths under _ISR_alta in BANK0
 
     None.
 
@@ -394,7 +637,15 @@ Critical Paths under _main in BANK1
 
     None.
 
+Critical Paths under _ISR_alta in BANK1
+
+    None.
+
 Critical Paths under _main in BANK2
+
+    None.
+
+Critical Paths under _ISR_alta in BANK2
 
     None.
 
@@ -402,7 +653,15 @@ Critical Paths under _main in BANK3
 
     None.
 
+Critical Paths under _ISR_alta in BANK3
+
+    None.
+
 Critical Paths under _main in BANK4
+
+    None.
+
+Critical Paths under _ISR_alta in BANK4
 
     None.
 
@@ -410,11 +669,23 @@ Critical Paths under _main in BANK5
 
     None.
 
+Critical Paths under _ISR_alta in BANK5
+
+    None.
+
 Critical Paths under _main in BANK6
 
     None.
 
+Critical Paths under _ISR_alta in BANK6
+
+    None.
+
 Critical Paths under _main in BANK7
+
+    None.
+
+Critical Paths under _ISR_alta in BANK7
 
     None.
 
@@ -423,19 +694,28 @@ Call Graph Tables:
  ---------------------------------------------------------------------------------
  (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
  ---------------------------------------------------------------------------------
- (0) _main                                                 3     3      0      75
-                                              0 COMRAM     3     3      0
+ (0) _main                                                 1     1      0      45
+                                             14 COMRAM     1     1      0
                      _configurazione
  ---------------------------------------------------------------------------------
  (1) _configurazione                                       0     0      0       0
  ---------------------------------------------------------------------------------
  Estimated maximum stack depth 1
  ---------------------------------------------------------------------------------
+ (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
+ ---------------------------------------------------------------------------------
+ (2) _ISR_alta                                            14    14      0       0
+                                              0 COMRAM    14    14      0
+ ---------------------------------------------------------------------------------
+ Estimated maximum stack depth 2
+ ---------------------------------------------------------------------------------
 
  Call Graph Graphs:
 
  _main (ROOT)
    _configurazione
+
+ _ISR_alta (ROOT)
 
  Address spaces:
 Name               Size   Autos  Total    Cost      Usage
@@ -457,52 +737,60 @@ BITBANK1           100      0       0       6        0.0%
 BANK1              100      0       0       7        0.0%
 BITBANK0            A0      0       0       4        0.0%
 BANK0               A0      0       0       5        0.0%
-BITCOMRAM           5F      0       0       0        0.0%
-COMRAM              5F      3       D       1       13.7%
+BITCOMRAM           5E      0       0       0        0.0%
+COMRAM              5E      F      1E       1       31.9%
 BITSFR               0      0       0      40        0.0%
 SFR                  0      0       0      40        0.0%
 STACK                0      0       0       2        0.0%
 NULL                 0      0       0       0        0.0%
-ABS                  0      0       D      20        0.0%
-DATA                 0      0       D       3        0.0%
+ABS                  0      0      1E      20        0.0%
+DATA                 0      0      1E       3        0.0%
 CODE                 0      0       0       0        0.0%
 
 
 Microchip Technology PIC18 Macro Assembler V1.35 build -356382666 
-Symbol Table                                                                                   Sat Apr 23 20:37:38 2016
+Symbol Table                                                                                   Sat Apr 23 22:33:29 2016
 
-                     u57 7FF0              __CFG_BOR$ON 000000              __CFG_BORV$3 000000  
-           __CFG_CP0$OFF 000000             __CFG_CP1$OFF 000000             __CFG_CP2$OFF 000000  
-           __CFG_CP3$OFF 000000                      l670 7FFC                      l662 7FE2  
-                    l654 7FC0                      l666 7FEA                      l658 7FCA  
-           __CFG_CPB$OFF 000000             __CFG_CPD$OFF 000000                      prod 000FF3  
-                    wreg 000FE8             __CFG_FOSC$HS 000000          ?_configurazione 000B  
-           __CFG_LVP$OFF 000000             __CFG_WDT$OFF 000000                     _LATA 000F89  
-                   _LATB 000F8A                     _LATC 000F8B                     _LATD 000F8C  
-                   _main 7FB4                     fsr1l 000FE1                     indf2 000FDF  
-                   fsr2l 000FD9                     prodl 000FF3                     start 0000  
+                      _i 001E                       u67 00DC              __CFG_BOR$ON 000000  
+            __CFG_BORV$3 000000             __CFG_CP0$OFF 000000             __CFG_CP1$OFF 000000  
+           __CFG_CP2$OFF 000000             __CFG_CP3$OFF 000000                      l702 00B2  
+                    l696 00A6                      l698 00AA             __CFG_CPB$OFF 000000  
+           __CFG_CPD$OFF 000000                      prod 000FF3                      wreg 000FE8  
+           __CFG_FOSC$HS 000000          ?_configurazione 0001             __CFG_LVP$OFF 000000  
+           __CFG_WDT$OFF 000000                     _LATA 000F89                     _LATB 000F8A  
+                   _LATC 000F8B                     _LATD 000F8C                     _main 009E  
+                   fsr0h 000FEA                     fsr1h 000FE2                     fsr0l 000FE9  
+                   fsr2h 000FDA                     fsr1l 000FE1                     indf2 000FDF  
+                   fsr2l 000FD9                     btemp 001F                     pclat 000FFA  
+                   prodh 000FF4                     prodl 000FF3                     start 0016  
           __CFG_IESO$OFF 000000            __CFG_MCLRE$ON 000000             ___param_bank 000010  
-          __CFG_PLLDIV$1 000000           __CFG_CCP2MX$ON 000000                    ?_main 000B  
-                  _CMCON 000FB4                    _PORTC 000F82                    _PORTD 000F83  
-          __CFG_USBDIV$1 000000                    _TRISA 000F92                    _TRISB 000F93  
-                  _TRISC 000F94                    _TRISD 000F95            __CFG_PWRT$OFF 000000  
-          __CFG_WRT0$OFF 000000            __CFG_WRT1$OFF 000000            __CFG_WRT2$OFF 000000  
-          __CFG_WRT3$OFF 000000           __CFG_EBTR0$OFF 000000           __CFG_FCMEN$OFF 000000  
-         __CFG_EBTR1$OFF 000000           __CFG_EBTR2$OFF 000000           __CFG_EBTR3$OFF 000000  
-          __CFG_WRTB$OFF 000000            __CFG_WRTC$OFF 000000            __CFG_WRTD$OFF 000000  
-         __CFG_EBTRB$OFF 000000                    main@c 000C                    main@i 000D  
-                  tablat 000FF5           __CFG_ICPRT$OFF 000000          __initialization 7F66  
-           __end_of_main 8000                   ??_main 000B            __activetblptr 000000  
-         __CFG_XINST$OFF 000000           __CFG_STVREN$ON 000000                   _numeri 0001  
-           __pdataCOMRAM 0001                   tblptrh 000FF7                   tblptrl 000FF6  
-                 tblptru 000FF8               __accesstop 0060  __end_of__initialization 7F86  
-        __CFG_PBADEN$OFF 000000            ___rparam_used 000001           __pcstackCOMRAM 000B  
-       ??_configurazione 000B          __CFG_VREGEN$OFF 000000                  __Hparam 0000  
-                __Lparam 0000                  __pcinit 7F66                  __ramtop 0800  
-                __ptext0 7FB4                  __ptext1 7F8C     end_of_initialization 7F86  
-                postdec1 000FE5                  postinc0 000FEE            __pidataCOMRAM 7F5C  
-    start_initialization 7F66         __CFG_LPT1OSC$OFF 000000  __size_of_configurazione 0028  
-               _UCFGbits 000F6F         __CFG_WDTPS$32768 000000                 _UCONbits 000F6D  
-              copy_data0 7F7A                 __Hrparam 0000                 __Lrparam 0000  
-          __size_of_main 004C    __CFG_CPUDIV$OSC1_PLL2 000000           _configurazione 7F8C  
- __end_of_configurazione 7FB4  
+          __CFG_PLLDIV$1 000000           __CFG_CCP2MX$ON 000000                    ?_main 0001  
+                  i2l684 005A                    i2l688 0060                    _PORTC 000F82  
+                  _PORTD 000F83            __CFG_USBDIV$1 000000                    _TRISA 000F92  
+                  _TRISB 000F93                    _TRISC 000F94                    _TRISD 000F95  
+          __CFG_PWRT$OFF 000000            __CFG_WRT0$OFF 000000            __CFG_WRT1$OFF 000000  
+          __CFG_WRT2$OFF 000000            __CFG_WRT3$OFF 000000           __CFG_EBTR0$OFF 000000  
+         __CFG_FCMEN$OFF 000000           __CFG_EBTR1$OFF 000000           __CFG_EBTR2$OFF 000000  
+         __CFG_EBTR3$OFF 000000         __end_of_ISR_alta 009E            __CFG_WRTB$OFF 000000  
+          __CFG_WRTC$OFF 000000            __CFG_WRTD$OFF 000000           __CFG_EBTRB$OFF 000000  
+                  _porte 001A                    main@a 000F                    tablat 000FF5  
+                  status 000FD8           __CFG_ICPRT$OFF 000000          __initialization 0116  
+           __end_of_main 00E6                   ??_main 000F            __activetblptr 000000  
+         __CFG_XINST$OFF 000000           __CFG_STVREN$ON 000000                   _numeri 0010  
+           __pdataCOMRAM 0010                   tblptrh 000FF7                   tblptrl 000FF6  
+                 tblptru 000FF8               __accesstop 0060  __end_of__initialization 0138  
+        __CFG_PBADEN$OFF 000000            ___rparam_used 000001           __pcstackCOMRAM 0001  
+              ?_ISR_alta 0001         ??_configurazione 000F               ??_ISR_alta 0001  
+        __CFG_VREGEN$OFF 000000                  __Hparam 0000                  __Lparam 0000  
+                __pcinit 0116                  __ramtop 0800                  __ptext0 009E  
+                __ptext1 00E6           __pintcode_body 001A     end_of_initialization 0138  
+                int_func 001A                  postdec1 000FE5                  postinc0 000FEE  
+              _PORTBbits 000F81                _PORTCbits 000F82            __pidataCOMRAM 0142  
+      __size_of_ISR_alta 0096      start_initialization 0116         __CFG_LPT1OSC$OFF 000000  
+            __pbssCOMRAM 001E                __pintcode 0008  __size_of_configurazione 0030  
+               _UCFGbits 000F6F                 _RCONbits 000FD0         __CFG_WDTPS$32768 000000  
+               _ISR_alta 0008                 _UCONbits 000F6D              _INTCON2bits 000FF1  
+              copy_data0 012C                 __Hrparam 0000                 __Lrparam 0000  
+          __size_of_main 0048                 int$flags 001F    __CFG_CPUDIV$OSC1_PLL2 000000  
+             _INTCONbits 000FF2           _configurazione 00E6                 intlevel2 0000  
+ __end_of_configurazione 0116  

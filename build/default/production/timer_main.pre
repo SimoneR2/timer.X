@@ -3679,12 +3679,7 @@ extern volatile unsigned char TABLAT @ 0xFF5;
 
 asm("TABLAT equ 0FF5h");
 
-
-
-
-extern volatile unsigned short long TBLPTR @ 0xFF6;
-
-
+# 9323
 asm("TBLPTR equ 0FF6h");
 
 
@@ -3705,19 +3700,10 @@ extern volatile unsigned char TBLPTRU @ 0xFF8;
 
 asm("TBLPTRU equ 0FF8h");
 
-
-
-
-extern volatile unsigned short long PCLAT @ 0xFF9;
-
-
+# 9349
 asm("PCLAT equ 0FF9h");
 
-
-
-extern volatile unsigned short long PC @ 0xFF9;
-
-
+# 9356
 asm("PC equ 0FF9h");
 
 
@@ -3766,10 +3752,7 @@ unsigned STKOVF :1;
 } STKPTRbits_t;
 extern volatile STKPTRbits_t STKPTRbits @ 0xFFC;
 
-# 9452
-extern volatile unsigned short long TOS @ 0xFFD;
-
-
+# 9455
 asm("TOS equ 0FFDh");
 
 
@@ -5458,32 +5441,55 @@ extern __nonreentrant void _delay3(unsigned char);
 
 # 4 "timer_main.c"
 void configurazione(void);
+volatile unsigned char i = 0;
 unsigned char numeri [] = {
 0b11001111,
-0b10001000,
-0b01101101,
-0b10101101,
-0b10101010,
+0b10000010,
+0b01100111,
 0b10100111,
-0b11100111,
-0b10001100,
+0b10101010,
+0b10101101,
+0b11101101,
+0b10000110,
 0b11101111,
-0b10101110
+0b10101111
 };
+unsigned char porte [] = {
+0b00000001,
+0b00000010,
+0b00000100,
+0b10000000
+};
+
+__attribute__((interrupt("__high_priority"))) void ISR_alta(void) {
+if (PORTBbits.RB1 == 1) {
+if (i < 11) {
+i++;
+}
+} else {
+if (i > 0) {
+i--;
+}
+}
+INTCONbits.INT0IF = 0;
+}
 
 void main(void) {
 configurazione();
-PORTC = 0b10000000;
-for (unsigned char i = 0; i < 11; i++) {
+PORTCbits.RC0 = 1;
+PORTD = 0xff;
+while (1) {
+for (unsigned char a = 0; a < 4; a++) {
 PORTD = numeri[i];
-for (unsigned char c = 0; c < 50; c++) {
-_delay((unsigned long)((10)*(16000000/4000.0)));
+PORTC = porte[a];
+_delay((unsigned long)((10)*(16000000/4000000.0)));
 }
 }
-
 }
 
 void configurazione(void) {
+UCONbits.USBEN = 0;
+UCFGbits.UTRDIS = 1;
 LATA = 0;
 TRISA = 0b11000000;
 
@@ -5495,8 +5501,13 @@ TRISC = 0x00;
 
 LATD = 0;
 TRISD = 0x00;
+INTCONbits.GIEH = 1;
+INTCONbits.GIEL = 0;
+RCONbits.IPEN = 1;
+INTCONbits.INT0IF = 0;
+INTCONbits.INT0IE = 1;
+INTCON2bits.INTEDG0 = 1;
 
-CMCON = 0x07;
-UCONbits.USBEN = 0;
-UCFGbits.UTRDIS = 0;
+
+
 }
