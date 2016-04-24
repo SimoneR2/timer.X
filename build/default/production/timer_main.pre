@@ -5439,8 +5439,9 @@ extern __nonreentrant void _delay3(unsigned char);
 
 #pragma config EBTRB = OFF
 
-# 4 "timer_main.c"
+# 6 "timer_main.c"
 void configurazione(void);
+void delay(unsigned char ritardo);
 volatile signed char secondi, minuti = 0;
 unsigned char numeri [] = {
 0b11001111,
@@ -5462,7 +5463,7 @@ unsigned char porte [] = {
 };
 
 __attribute__((interrupt("__high_priority"))) void ISR_alta(void) {
-if (INTCONbits.INT0IF == 1) {
+if ((INTCONbits.INT0IF == 1)&&(INTCONbits.TMR0IF == 0)) {
 if (PORTBbits.RB1 == 0) {
 secondi++;
 if (secondi > 59) {
@@ -5471,20 +5472,23 @@ secondi = 0;
 }
 } else {
 secondi--;
-if (secondi < 1) {
+
+if ((secondi < 0)&&(minuti > 0)) {
 minuti--;
 secondi = 59;
 }
 }
-
 INTCONbits.INT0IF = 0;
 }
+
 if (INTCONbits.TMR0IF == 1) {
 secondi--;
 if (secondi < 0) {
+
 minuti--;
 secondi = 59;
 }
+PORTAbits.RA0 = ~PORTAbits.RA0;
 TMR0H = 0x0B;
 TMR0L = 0xDC;
 INTCONbits.TMR0IF = 0;
@@ -5495,6 +5499,14 @@ unsigned char disp[4] = 0;
 
 void main(void) {
 configurazione();
+minuti = 0;
+secondi = 0;
+PORTCbits.RC6 = 1;
+for (unsigned char i = 0; i < 200; i++) {
+_delay((unsigned long)((10)*(16000000/4000.0)));
+}
+PORTCbits.RC6 = 0;
+
 while (1) {
 disp[3] = secondi / 10;
 disp[2] = secondi - (disp[3] * 10);
@@ -5503,13 +5515,15 @@ disp[1] = minuti - (disp[0] * 10);
 
 for (unsigned char i = 0; i < 4; i++) {
 PORTD = numeri[disp[i]];
-if (i == 2){
-PORTDbits.RD4 =1;
+if (i == 2) {
+PORTDbits.RD4 = 1;
 }
 PORTC = porte[i];
 _delay((unsigned long)((2)*(16000000/4000.0)));
 }
 if ((PORTBbits.RB2 == 0)&&((secondi != 0) || (minuti != 0))) {
+;
+;
 PORTAbits.RA5 = 1;
 INTCONbits.INT0IE = 0;
 INTCONbits.TMR0IF = 0;
@@ -5521,26 +5535,31 @@ T0CONbits.TMR0ON = 1;
 if ((T0CONbits.TMR0ON == 1)&&(secondi == 0)&(minuti == 0)) {
 T0CONbits.TMR0ON = 0;
 PORTAbits.RA5 = 0;
-for (unsigned char c = 0; c<10; c++){
+for (unsigned char c = 0; c < 10; c++) {
+for (unsigned char s = 0; s < 100; s++) {
 for (unsigned char i = 0; i < 4; i++) {
 PORTD = numeri[0];
 PORTC = porte[i];
 _delay((unsigned long)((2)*(16000000/4000.0)));
 }
-for (unsigned char b = 0; b < 10; b++) {
-_delay((unsigned long)((10)*(16000000/4000.0)));
 }
 for (unsigned char i = 0; i < 4; i++) {
 PORTD = 0x00;
 PORTC = porte[i];
 _delay((unsigned long)((2)*(16000000/4000.0)));
 }
+delay(100);
+INTCONbits.INT0IE = 1;
+}
+}
+}
+}
 
-for (unsigned char f = 0; f < 10; f++) {
+void delay(unsigned char ritardo) {
+ritardo = ritardo / 10;
+while (ritardo > 0) {
 _delay((unsigned long)((10)*(16000000/4000.0)));
-}
-}
-}
+ritardo--;
 }
 }
 
